@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import './App.css';
 import logo from '../images/logo.gif';
+import shareImg from '../images/share.png';
 
 declare global {
   interface Window {
@@ -296,22 +297,10 @@ function App() {
   const [isAnimate, setIsAnimate] = useState(false);
 
   useEffect(() => {
-    // 카카오 SDK 초기화 시도
-    const initKakao = () => {
-      if (window.Kakao && !window.Kakao.isInitialized()) {
-        try {
-          window.Kakao.init('4b8cf984941f0ddf07417296461d7c6b');
-          console.log('Kakao SDK Initialized');
-        } catch (e) {
-          console.error('Kakao Init Error:', e);
-        }
-      }
-    };
-
-    initKakao();
-    // 만약 SDK 로드가 늦어질 경우를 대비해 짧은 지연 후 한 번 더 시도
-    const timer = setTimeout(initKakao, 1000);
-    return () => clearTimeout(timer);
+    // 카카오 SDK 초기화
+    if (window.Kakao && !window.Kakao.isInitialized()) {
+      window.Kakao.init('4b8cf984941f0ddf07417296461d7c6b');
+    }
   }, []);
 
   const startTest = () => {
@@ -480,9 +469,9 @@ function App() {
         }
       }
 
-      // 실제 배포된 환경의 이미지 주소를 생성합니다.
-      const shareImageUrl = window.location.origin + logo;
-      const currentUrl = window.location.href;
+      // 절대 경로 주소 생성 (공유될 최종 배포 주소를 origin으로 사용)
+      const currentUrl = window.location.origin;
+      const imageUrl = currentUrl + shareImg;
 
       try {
         kakao.Share.sendDefault({
@@ -490,11 +479,16 @@ function App() {
           content: {
             title: `피부 MBTI (PBTI) 테스트 결과 ✨`,
             description: `내 피부는 ${info.title} ${info.emoji} (${resultType})! 너는 어때? 같이 해보자! 😉`,
-            imageUrl: shareImageUrl,
+            imageUrl: imageUrl,
             link: {
               mobileWebUrl: currentUrl,
               webUrl: currentUrl,
             },
+          },
+          social: {
+            likeCount: 12405,
+            commentCount: 852,
+            sharedCount: 3241,
           },
           buttons: [
             {
@@ -628,7 +622,7 @@ function App() {
               카톡 공유
             </button>
             <button className="btn btn-outline" onClick={() => {
-              navigator.clipboard.writeText(window.location.href);
+              navigator.clipboard.writeText(window.location.origin);
               alert('링크가 복사되었습니다!');
             }}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
