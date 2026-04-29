@@ -2,6 +2,12 @@ import { useState, useEffect } from 'react';
 import './App.css';
 import logo from '../images/logo.gif';
 
+declare global {
+  interface Window {
+    Kakao: any;
+  }
+}
+
 type Dimension = 'IE' | 'SN' | 'TF' | 'PJ';
 
 interface Question {
@@ -152,7 +158,7 @@ const QUESTIONS: Question[] = [
     text: "Q14. 피부 컨디션의 기복(변화)을 느끼는 정도는?",
     options: [
       "1년 내내 큰 변화 없이 어느 정도 일정한 상태를 유지한다.",
-      "환절기나 아주 피곤할 때만 가끔 변화를 느낀다.",
+      "환절기나 아주 피곤할 때만 가끔 변화를 느긴다.",
       "어제는 꿀피부였다가 오늘은 칙칙해지는 등 하루 단위로 기복이 심하다."
     ]
   },
@@ -288,6 +294,13 @@ function App() {
   const [history, setHistory] = useState<number[]>([]);
   const [resultType, setResultType] = useState('');
   const [isAnimate, setIsAnimate] = useState(false);
+
+  useEffect(() => {
+    // 카카오 SDK 초기화
+    if (window.Kakao && !window.Kakao.isInitialized()) {
+      window.Kakao.init('4b8cf984941f0ddf07417296461d7c6b');
+    }
+  }, []);
 
   const startTest = () => {
     setState('quiz');
@@ -437,8 +450,34 @@ function App() {
   );
 
   const renderResult = () => {
-    const info = TYPE_INFO[resultType] || { title: resultType, desc: "", care: "" };
+    const info = TYPE_INFO[resultType] || { title: resultType, desc: "", care: "", emoji: "" };
     
+    const shareToKakao = () => {
+      if (!window.Kakao) return;
+
+      window.Kakao.Share.sendDefault({
+        objectType: 'feed',
+        content: {
+          title: `피부 MBTI (PBTI) 테스트 결과 ✨`,
+          description: `내 피부는 ${info.title} ${info.emoji} (${resultType})! 너는 어때? 같이 해보자! 😉`,
+          imageUrl: 'https://homepage-five-chi.vercel.app/logo.gif',
+          link: {
+            mobileWebUrl: window.location.href,
+            webUrl: window.location.href,
+          },
+        },
+        buttons: [
+          {
+            title: '테스트 하러가기',
+            link: {
+              mobileWebUrl: window.location.href,
+              webUrl: window.location.href,
+            },
+          },
+        ],
+      });
+    };
+
     const getPercentage = (val1: number, val2: number, tieBreakerRight: boolean) => {
       if (!isAnimate) return 50; // 애니메이션 전에는 정중앙
 
@@ -518,8 +557,8 @@ function App() {
                   <span className="dimension-desc">{dim.desc}</span>
                 </div>
                 <div className="score-bar-container">
-                  <div className="score-bar-left" style={{ width: `${leftPercent}%`, backgroundColor: leftScore >= rightScore && !(leftScore === rightScore && dim.tieBreakerRight) ? '#3b82f6' : '#cbd5e1' }}></div>
-                  <div className="score-bar-right" style={{ width: `${100 - leftPercent}%`, backgroundColor: (rightScore > leftScore) || (leftScore === rightScore && dim.tieBreakerRight) ? '#3b82f6' : '#cbd5e1' }}></div>
+                  <div className="score-bar-left" style={{ width: `${leftPercent}%`, backgroundColor: leftScore >= rightScore && !(leftScore === rightScore && dim.tieBreakerRight) ? '#7c3aed' : '#f3f4f6' }}></div>
+                  <div className="score-bar-right" style={{ width: `${100 - leftPercent}%`, backgroundColor: (rightScore > leftScore) || (leftScore === rightScore && dim.tieBreakerRight) ? '#7c3aed' : '#f3f4f6' }}></div>
                   <div className="score-divider"></div>
                 </div>
                 <div className="dimension-tags">
@@ -548,7 +587,7 @@ function App() {
 
         <div className="share-container">
           <div className="share-row">
-            <button className="btn btn-kakao" onClick={() => alert('카카오톡 공유 기능은 실제 카카오 API 키 설정이 필요합니다.')}>
+            <button className="btn btn-kakao" onClick={shareToKakao}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 3c-4.97 0-9 3.185-9 7.115 0 2.553 1.706 4.8 4.315 6.091l-.81 2.962c-.06.21.173.397.354.273l3.483-2.32c.54.075 1.097.114 1.658.114 4.97 0 9-3.185 9-7.115S16.97 3 12 3z"/>
               </svg>
