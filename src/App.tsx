@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import './App.css';
+import logo from '../images/logo.gif';
 
 type Dimension = 'IE' | 'SN' | 'TF' | 'PJ';
 
@@ -380,6 +381,14 @@ function App() {
       <button className="btn btn-primary" onClick={startTest}>
         테스트 시작하기
       </button>
+
+      <div className="landing-footer">
+        <a href="https://homepage-five-chi.vercel.app/" target="_blank" rel="noopener noreferrer" className="landing-footer" style={{ textDecoration: 'none' }}>
+          <img src={logo} alt="후한의원 로고" className="footer-logo" />
+          <span className="footer-link">후한의원 구미점</span>
+        </a>
+      </div>
+
       <div style={{ marginTop: '40px', textAlign: 'center', color: '#94a3b8', fontSize: '14px' }}>
         현재 12,405명이 참여했습니다 ✨
       </div>
