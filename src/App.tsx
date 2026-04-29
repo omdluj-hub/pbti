@@ -468,9 +468,10 @@ function App() {
         }
       }
 
-      // 카카오톡 공유에 사용할 URL (도메인 설정과 정확히 일치해야 함)
-      const shareUrl = 'https://pbti-iota.vercel.app';
-      const imageUrl = 'https://pbti-iota.vercel.app/share.png';
+      // 현재 페이지의 주소를 가져오되, 쿼리 스트링이나 해시를 제거한 깨끗한 주소 사용
+      const currentUrl = window.location.href.split('?')[0].split('#')[0];
+      const shareUrl = currentUrl.endsWith('/') ? currentUrl.slice(0, -1) : currentUrl;
+      const imageUrl = `${shareUrl}/share.png`;
 
       try {
         kakao.Share.sendDefault({
@@ -480,16 +481,16 @@ function App() {
             description: `내 피부는 ${info.title} ${info.emoji} (${resultType})! 너는 어때? 같이 해보자! 😉`,
             imageUrl: imageUrl,
             link: {
-              mobileWebUrl: shareUrl,
-              webUrl: shareUrl,
+              mobileWebUrl: currentUrl,
+              webUrl: currentUrl,
             },
           },
           buttons: [
             {
               title: '나도 테스트 하러가기',
               link: {
-                mobileWebUrl: shareUrl,
-                webUrl: shareUrl,
+                mobileWebUrl: currentUrl,
+                webUrl: currentUrl,
               },
             },
           ],
