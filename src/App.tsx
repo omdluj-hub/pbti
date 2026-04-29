@@ -469,8 +469,8 @@ function App() {
       }
 
       // 카카오톡 공유에 사용할 URL (도메인 설정과 정확히 일치해야 함)
-      const shareUrl = 'https://pbti-iota.vercel.app/';
-      const imageUrl = shareUrl + 'share.png';
+      const shareUrl = 'https://pbti-iota.vercel.app';
+      const imageUrl = 'https://pbti-iota.vercel.app/share.png';
 
       try {
         kakao.Share.sendDefault({
@@ -616,7 +616,7 @@ function App() {
               카톡 공유
             </button>
             <button className="btn btn-outline" onClick={() => {
-              const shareUrl = 'https://pbti-iota.vercel.app/';
+              const shareUrl = 'https://pbti-iota.vercel.app';
               navigator.clipboard.writeText(shareUrl);
               alert('링크가 복사되었습니다!');
             }}>
