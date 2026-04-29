@@ -373,6 +373,11 @@ function App() {
 
   const renderLanding = () => (
     <div className="fade-in">
+      <a href="https://homepage-five-chi.vercel.app/" target="_blank" rel="noopener noreferrer" className="landing-header">
+        <img src={logo} alt="후한의원 로고" className="header-logo" />
+        <span className="header-link">후한의원 구미점</span>
+      </a>
+
       <h1>피부 MBTI ✨<br /><span style={{ fontSize: '18px', color: '#7c3aed', fontWeight: '800' }}>(aka. PBTI)</span></h1>
       <p className="description">
         내 피부는 어떤 체질일까요?<br />
@@ -381,13 +386,6 @@ function App() {
       <button className="btn btn-primary" onClick={startTest}>
         테스트 시작하기
       </button>
-
-      <div className="landing-footer">
-        <a href="https://homepage-five-chi.vercel.app/" target="_blank" rel="noopener noreferrer" className="landing-footer" style={{ textDecoration: 'none' }}>
-          <img src={logo} alt="후한의원 로고" className="footer-logo" />
-          <span className="footer-link">후한의원 구미점</span>
-        </a>
-      </div>
 
       <div style={{ marginTop: '40px', textAlign: 'center', color: '#94a3b8', fontSize: '14px' }}>
         현재 12,405명이 참여했습니다 ✨
