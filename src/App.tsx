@@ -480,13 +480,16 @@ function App() {
         }
       }
 
+      // 실제 배포된 환경의 이미지 주소를 생성합니다.
+      const shareImageUrl = window.location.origin + logo;
+
       try {
         kakao.Share.sendDefault({
           objectType: 'feed',
           content: {
             title: `피부 MBTI (PBTI) 테스트 결과 ✨`,
             description: `내 피부는 ${info.title} ${info.emoji} (${resultType})! 너는 어때? 같이 해보자! 😉`,
-            imageUrl: 'https://homepage-five-chi.vercel.app/logo.gif',
+            imageUrl: shareImageUrl,
             link: {
               mobileWebUrl: window.location.href,
               webUrl: window.location.href,
