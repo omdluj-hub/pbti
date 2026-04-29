@@ -158,7 +158,7 @@ const QUESTIONS: Question[] = [
     text: "Q14. 피부 컨디션의 기복(변화)을 느끼는 정도는?",
     options: [
       "1년 내내 큰 변화 없이 어느 정도 일정한 상태를 유지한다.",
-      "환절기나 아주 피곤할 때만 가끔 변화를 느긴다.",
+      "환절기나 아주 피곤할 때만 가끔 변화를 느끼한다.",
       "어제는 꿀피부였다가 오늘은 칙칙해지는 등 하루 단위로 기복이 심하다."
     ]
   },
@@ -296,10 +296,22 @@ function App() {
   const [isAnimate, setIsAnimate] = useState(false);
 
   useEffect(() => {
-    // 카카오 SDK 초기화
-    if (window.Kakao && !window.Kakao.isInitialized()) {
-      window.Kakao.init('4b8cf984941f0ddf07417296461d7c6b');
-    }
+    // 카카오 SDK 초기화 시도
+    const initKakao = () => {
+      if (window.Kakao && !window.Kakao.isInitialized()) {
+        try {
+          window.Kakao.init('4b8cf984941f0ddf07417296461d7c6b');
+          console.log('Kakao SDK Initialized');
+        } catch (e) {
+          console.error('Kakao Init Error:', e);
+        }
+      }
+    };
+
+    initKakao();
+    // 만약 SDK 로드가 늦어질 경우를 대비해 짧은 지연 후 한 번 더 시도
+    const timer = setTimeout(initKakao, 1000);
+    return () => clearTimeout(timer);
   }, []);
 
   const startTest = () => {
@@ -453,29 +465,47 @@ function App() {
     const info = TYPE_INFO[resultType] || { title: resultType, desc: "", care: "", emoji: "" };
     
     const shareToKakao = () => {
-      if (!window.Kakao) return;
+      const kakao = window.Kakao;
+      
+      if (!kakao) {
+        alert('카카오 SDK를 불러오는 중입니다. 잠시만 기다려주세요.');
+        return;
+      }
 
-      window.Kakao.Share.sendDefault({
-        objectType: 'feed',
-        content: {
-          title: `피부 MBTI (PBTI) 테스트 결과 ✨`,
-          description: `내 피부는 ${info.title} ${info.emoji} (${resultType})! 너는 어때? 같이 해보자! 😉`,
-          imageUrl: 'https://homepage-five-chi.vercel.app/logo.gif',
-          link: {
-            mobileWebUrl: window.location.href,
-            webUrl: window.location.href,
-          },
-        },
-        buttons: [
-          {
-            title: '테스트 하러가기',
+      if (!kakao.isInitialized()) {
+        try {
+          kakao.init('4b8cf984941f0ddf07417296461d7c6b');
+        } catch (e) {
+          console.error('Kakao Init Error:', e);
+        }
+      }
+
+      try {
+        kakao.Share.sendDefault({
+          objectType: 'feed',
+          content: {
+            title: `피부 MBTI (PBTI) 테스트 결과 ✨`,
+            description: `내 피부는 ${info.title} ${info.emoji} (${resultType})! 너는 어때? 같이 해보자! 😉`,
+            imageUrl: 'https://homepage-five-chi.vercel.app/logo.gif',
             link: {
               mobileWebUrl: window.location.href,
               webUrl: window.location.href,
             },
           },
-        ],
-      });
+          buttons: [
+            {
+              title: '테스트 하러가기',
+              link: {
+                mobileWebUrl: window.location.href,
+                webUrl: window.location.href,
+              },
+            },
+          ],
+        });
+      } catch (err) {
+        console.error('Kakao Share Error:', err);
+        alert('카카오톡 공유 중 오류가 발생했습니다. 카카오 개발자 콘솔의 도메인 설정을 확인해주세요.');
+      }
     };
 
     const getPercentage = (val1: number, val2: number, tieBreakerRight: boolean) => {
@@ -526,12 +556,12 @@ function App() {
     return (
       <div className="fade-in">
         <div className="result-header">
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px', flexWrap: 'nowrap' }}>
             <a href="https://homepage-five-chi.vercel.app/" target="_blank" rel="noopener noreferrer" className="result-branding">
               <img src={logo} alt="후한의원 로고" className="result-branding-logo" />
-              <span className="result-branding-text">후한의원 구미점</span>
+              <span className="result-branding-text" style={{ whiteSpace: 'nowrap' }}>후한의원 구미점</span>
             </a>
-            <span style={{ fontSize: '15px', fontWeight: '700', color: '#6b7280' }}>과 함께 알아본</span>
+            <span style={{ fontSize: '15px', fontWeight: '700', color: '#6b7280', whiteSpace: 'nowrap' }}>과 함께 알아본</span>
           </div>
           <div className="type-badge">당신의 피부 MBTI 결과는?</div>
           <h2 className="type-title" style={{ fontSize: '24px', marginBottom: '5px', marginTop: '20px' }}>{info.title}</h2>
