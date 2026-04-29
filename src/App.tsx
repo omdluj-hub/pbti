@@ -294,6 +294,18 @@ function App() {
   const [history, setHistory] = useState<number[]>([]);
   const [resultType, setResultType] = useState('');
   const [isAnimate, setIsAnimate] = useState(false);
+  const [activeDesc, setActiveDesc] = useState<string | null>(null);
+
+  const DIMENSION_DESCS: Record<string, string> = {
+    I: "몸 내부의 변화(수면, 스트레스, 생리 주기 등)에 피부 컨디션이 가장 먼저 반응합니다.",
+    E: "날씨, 미세먼지, 화장품 성분 등 외부 환경 변화에 피부가 즉각적으로 반응합니다.",
+    S: "유분 분비가 많아 끈적임이나 번들거림이 고민이며, 산뜻한 케어를 선호합니다.",
+    N: "유분보다는 수분이 부족하여 피부가 당기거나 푸석해지기 쉬우며, 촉촉한 케어를 선호합니다.",
+    T: "여드름, 잡티 등 눈에 보이는 피부 결점을 해결하는 것이 가장 중요한 과제입니다.",
+    F: "피부의 당김, 결, 편안한 느낌 등 내가 직접 느끼는 컨디션을 가장 중요하게 생각합니다.",
+    P: "속피부는 민감해도 겉으로는 티가 잘 나지 않아, 내버려 두기 쉬운 타입입니다.",
+    J: "컨디션이 조금만 나빠져도 안색이 변하거나 뒤집히는 등 티가 확 나서 세심한 관리가 필요합니다."
+  };
 
   useEffect(() => {
     // 카카오 SDK 초기화
@@ -585,12 +597,32 @@ function App() {
                   <div className="score-divider"></div>
                 </div>
                 <div className="dimension-tags">
-                  <span className={leftScore >= rightScore && !(leftScore === rightScore && dim.tieBreakerRight) ? 'tag-active' : ''}>{dim.left.name} ({dim.left.key})</span>
-                  <span className={(rightScore > leftScore) || (leftScore === rightScore && dim.tieBreakerRight) ? 'tag-active' : ''}>{dim.right.name} ({dim.right.key})</span>
+                  <span 
+                    className={`dimension-tag-clickable ${leftScore >= rightScore && !(leftScore === rightScore && dim.tieBreakerRight) ? 'tag-active' : ''}`}
+                    onClick={() => setActiveDesc(DIMENSION_DESCS[dim.left.key])}
+                  >
+                    {dim.left.name} ({dim.left.key})
+                  </span>
+                  <span 
+                    className={`dimension-tag-clickable ${(rightScore > leftScore) || (leftScore === rightScore && dim.tieBreakerRight) ? 'tag-active' : ''}`}
+                    onClick={() => setActiveDesc(DIMENSION_DESCS[dim.right.key])}
+                  >
+                    {dim.right.name} ({dim.right.key})
+                  </span>
                 </div>
               </div>
             );
           })}
+          
+          {activeDesc && (
+            <div className="dimension-info-box fade-in">
+              <div className="info-box-header">
+                <span>💡 설명</span>
+                <button className="info-box-close" onClick={() => setActiveDesc(null)}>×</button>
+              </div>
+              <p className="info-box-text">{activeDesc}</p>
+            </div>
+          )}
         </div>
 
         <div className="care-section">
