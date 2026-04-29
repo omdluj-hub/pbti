@@ -201,17 +201,44 @@ h1 {
   margin-bottom: 50px;
 }
 
+.result-branding {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  background-color: #f5f3ff;
+  padding: 8px 16px;
+  border-radius: 20px;
+  margin-bottom: 12px;
+  transition: all 0.3s;
+  border: 1px solid #ede9fe;
+}
+
+.result-branding:hover {
+  background-color: #ede9fe;
+  transform: translateY(-1px);
+}
+
+.result-branding-logo {
+  width: 18px;
+  height: auto;
+}
+
+.result-branding-text {
+  font-size: 13px;
+  font-weight: 800;
+  color: #7c3aed;
+}
+
 .type-badge {
   display: inline-block;
-  background-color: #f5f3ff;
-  color: #7c3aed;
-  padding: 10px 22px;
-  border-radius: 40px;
-  font-weight: 800;
+  color: #9ca3af;
+  font-weight: 700;
   font-size: 13px;
   margin-bottom: 18px;
   letter-spacing: 0.05em;
 }
+
 
 .result-card {
   background-color: #ffffff;
