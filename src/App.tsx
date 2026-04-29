@@ -637,6 +637,11 @@ function App() {
             </button>
           </a>
         </div>
+
+        <div className="result-disclaimer">
+          본 콘텐츠는 후한의원 구미점에서 제공하는 단순 흥미 목적의 자료이며, <br />
+          의료법상 진단 행위에 해당하지 않습니다.
+        </div>
       </div>
     );
   };

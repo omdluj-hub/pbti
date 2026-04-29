@@ -473,3 +473,14 @@ h1 {
   h1 { font-size: 32px; }
   .question-text { font-size: 23px; }
 }
+
+.result-disclaimer {
+  margin-top: 40px;
+  font-size: 11px;
+  color: #9ca3af;
+  opacity: 0.7;
+  text-align: center;
+  line-height: 1.6;
+  word-break: keep-all;
+  padding-bottom: 20px;
+}
