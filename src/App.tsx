@@ -373,16 +373,17 @@ function App() {
 
   const renderLanding = () => (
     <div className="fade-in">
-      <a href="https://homepage-five-chi.vercel.app/" target="_blank" rel="noopener noreferrer" className="landing-header">
-        <img src={logo} alt="후한의원 로고" className="header-logo" />
-        <span className="header-link">후한의원 구미점</span>
-      </a>
-
       <h1>피부 MBTI ✨<br /><span style={{ fontSize: '18px', color: '#7c3aed', fontWeight: '800' }}>(aka. PBTI)</span></h1>
       <p className="description">
         내 피부는 어떤 체질일까요?<br />
         16가지 질문을 통해 당신의 <b>PBTI</b>를 분석해 드립니다.
       </p>
+
+      <a href="https://homepage-five-chi.vercel.app/" target="_blank" rel="noopener noreferrer" className="branding-section">
+        <img src={logo} alt="후한의원 로고" className="branding-logo" />
+        <span className="hospital-name">후한의원 구미점</span>
+      </a>
+
       <button className="btn btn-primary" onClick={startTest}>
         테스트 시작하기
       </button>

@@ -377,32 +377,45 @@ h1 {
   background-color: #ffffff !important;
 }
 
-/* Header Branding */
-.landing-header {
-  position: absolute;
-  top: 20px;
-  right: 20px;
+/* Center Branding Section */
+.branding-section {
   display: flex;
+  flex-direction: column;
   align-items: center;
   gap: 8px;
+  margin: 10px 0 35px;
   text-decoration: none;
-  z-index: 10;
+  animation: fadeIn 1s ease-out 0.3s both;
 }
 
-.header-logo {
-  width: 24px;
+.branding-logo {
+  width: 60px; /* 절반 정도의 크기 */
   height: auto;
   opacity: 0.9;
 }
 
-.header-link {
-  font-size: 13px;
-  font-weight: 700;
-  color: #94a3b8;
-  transition: all 0.3s;
+.hospital-name {
+  font-size: 18px;
+  font-weight: 800;
+  color: #1e293b;
+  letter-spacing: 0.1em;
+  position: relative;
+  padding-bottom: 4px;
 }
 
-.landing-header:hover .header-link {
+.hospital-name::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 2px;
+  background-color: #7c3aed;
+  border-radius: 2px;
+}
+
+.branding-section:hover .hospital-name {
   color: #7c3aed;
 }
 
