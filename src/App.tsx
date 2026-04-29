@@ -469,10 +469,9 @@ function App() {
         }
       }
 
-      // 절대 경로 주소 생성 (공유될 최종 배포 주소를 origin으로 사용)
-      const baseUrl = window.location.origin;
-      const currentUrl = window.location.origin + window.location.pathname;
-      const imageUrl = baseUrl + shareImg;
+      // 카카오톡 공유에 사용할 URL (도메인 설정과 정확히 일치해야 함)
+      const shareUrl = 'https://pbti-iota.vercel.app/';
+      const imageUrl = shareUrl + 'share.png';
 
       try {
         kakao.Share.sendDefault({
@@ -482,21 +481,16 @@ function App() {
             description: `내 피부는 ${info.title} ${info.emoji} (${resultType})! 너는 어때? 같이 해보자! 😉`,
             imageUrl: imageUrl,
             link: {
-              mobileWebUrl: currentUrl,
-              webUrl: currentUrl,
+              mobileWebUrl: shareUrl,
+              webUrl: shareUrl,
             },
-          },
-          social: {
-            likeCount: 12405,
-            commentCount: 852,
-            sharedCount: 3241,
           },
           buttons: [
             {
               title: '나도 테스트 하러가기',
               link: {
-                mobileWebUrl: currentUrl,
-                webUrl: currentUrl,
+                mobileWebUrl: shareUrl,
+                webUrl: shareUrl,
               },
             },
           ],
@@ -623,8 +617,8 @@ function App() {
               카톡 공유
             </button>
             <button className="btn btn-outline" onClick={() => {
-              const currentUrl = window.location.origin + window.location.pathname;
-              navigator.clipboard.writeText(currentUrl);
+              const shareUrl = 'https://pbti-iota.vercel.app/';
+              navigator.clipboard.writeText(shareUrl);
               alert('링크가 복사되었습니다!');
             }}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
