@@ -217,8 +217,24 @@ h1 {
 .result-branding-text {
   font-size: 15px;
   font-weight: 800;
-  color: #7c3aed;
+  color: #6b7280; /* 회색으로 통일 */
 }
+
+.btn-secondary {
+  background: #ffffff;
+  color: #7c3aed;
+  border: 2px solid #f5f3ff !important;
+  font-weight: 800;
+  margin-top: 0 !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+}
+
+.btn-secondary:hover {
+  border-color: #a78bfa !important;
+  background-color: #f5f3ff !important;
+  transform: translateY(-2px);
+}
+
 
 .type-badge {
   display: inline-block;

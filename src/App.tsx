@@ -568,6 +568,11 @@ function App() {
           <button className="btn btn-primary" onClick={() => setState('landing')}>
             테스트 다시하기
           </button>
+          <a href="https://homepage-five-chi.vercel.app/" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+            <button className="btn btn-secondary">
+              내 피부 관리, 후한의원과 상담하기
+            </button>
+          </a>
         </div>
       </div>
     );
