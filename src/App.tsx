@@ -487,12 +487,15 @@ function App() {
     return (
       <div className="fade-in">
         <div className="result-header">
-          <a href="https://homepage-five-chi.vercel.app/" target="_blank" rel="noopener noreferrer" className="result-branding">
-            <img src={logo} alt="후한의원 로고" className="result-branding-logo" />
-            <span className="result-branding-text">후한의원 구미점</span>
-          </a>
-          <div className="type-badge">과 함께 알아본 당신의 피부 MBTI 결과는?</div>
-          <h2 className="type-title" style={{ fontSize: '24px', marginBottom: '5px' }}>{info.title}</h2>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px', flexWrap: 'wrap' }}>
+            <a href="https://homepage-five-chi.vercel.app/" target="_blank" rel="noopener noreferrer" className="result-branding">
+              <img src={logo} alt="후한의원 로고" className="result-branding-logo" />
+              <span className="result-branding-text">후한의원 구미점</span>
+            </a>
+            <span style={{ fontSize: '15px', fontWeight: '700', color: '#6b7280' }}>과 함께 알아본</span>
+          </div>
+          <div className="type-badge">당신의 피부 MBTI 결과는?</div>
+          <h2 className="type-title" style={{ fontSize: '24px', marginBottom: '5px', marginTop: '20px' }}>{info.title}</h2>
           <h1 className="type-title" style={{ fontSize: '48px', color: '#7c3aed', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '15px' }}>
             <span>{info.emoji}</span>
             <span>{resultType}</span>
