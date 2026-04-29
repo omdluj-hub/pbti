@@ -470,8 +470,9 @@ function App() {
       }
 
       // 절대 경로 주소 생성 (공유될 최종 배포 주소를 origin으로 사용)
-      const currentUrl = window.location.origin;
-      const imageUrl = currentUrl + shareImg;
+      const baseUrl = window.location.origin;
+      const currentUrl = window.location.origin + window.location.pathname;
+      const imageUrl = baseUrl + shareImg;
 
       try {
         kakao.Share.sendDefault({
@@ -622,7 +623,8 @@ function App() {
               카톡 공유
             </button>
             <button className="btn btn-outline" onClick={() => {
-              navigator.clipboard.writeText(window.location.origin);
+              const currentUrl = window.location.origin + window.location.pathname;
+              navigator.clipboard.writeText(currentUrl);
               alert('링크가 복사되었습니다!');
             }}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
