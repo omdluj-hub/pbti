@@ -482,6 +482,7 @@ function App() {
 
       // 실제 배포된 환경의 이미지 주소를 생성합니다.
       const shareImageUrl = window.location.origin + logo;
+      const currentUrl = window.location.href;
 
       try {
         kakao.Share.sendDefault({
@@ -491,16 +492,16 @@ function App() {
             description: `내 피부는 ${info.title} ${info.emoji} (${resultType})! 너는 어때? 같이 해보자! 😉`,
             imageUrl: shareImageUrl,
             link: {
-              mobileWebUrl: window.location.href,
-              webUrl: window.location.href,
+              mobileWebUrl: currentUrl,
+              webUrl: currentUrl,
             },
           },
           buttons: [
             {
-              title: '테스트 하러가기',
+              title: '나도 테스트 하러가기',
               link: {
-                mobileWebUrl: window.location.href,
-                webUrl: window.location.href,
+                mobileWebUrl: currentUrl,
+                webUrl: currentUrl,
               },
             },
           ],
