@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import './App.css';
 import logo from '../images/logo.gif';
-import shareImg from '../images/share.png';
 
 declare global {
   interface Window {
