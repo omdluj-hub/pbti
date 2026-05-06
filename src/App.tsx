@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import './App.css';
 import logo from '../images/logo.gif';
 import StatsPage from './StatsPage';
+import { supabase } from './supabaseClient';
 
 declare global {
   interface Window {
@@ -45,11 +46,21 @@ function App() {
       window.Kakao.init('4b8cf984941f0ddf07417296461d7c6b');
     }
 
-    // 방문 기록 (API 호출)
-    fetch('http://localhost:3001/api/visit', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' }
-    }).catch(err => console.error('Visit tracking failed:', err));
+    // Supabase 방문 기록
+    const trackVisit = async () => {
+      try {
+        const res = await fetch('https://api.ipify.org?format=json');
+        const data = await res.json();
+        
+        await supabase.from('pbti_visits').insert([
+          { ip: data.ip, user_agent: navigator.userAgent }
+        ]);
+      } catch (err) {
+        console.error('Visit tracking failed:', err);
+      }
+    };
+
+    trackVisit();
 
     // 관리자 페이지 진입 체크 (URL 파라미터 ?admin=stats)
     const params = new URLSearchParams(window.location.search);

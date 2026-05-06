@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
+import { supabase } from './supabaseClient';
 
 interface Visit {
   ip: string;
-  visit_time: string;
+  created_at: string;
 }
 
 interface DailyStat {
@@ -23,62 +24,118 @@ function StatsPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch('http://localhost:3001/api/stats')
-      .then((res) => {
-        if (!res.ok) throw new Error('Failed to fetch stats');
-        return res.json();
-      })
-      .then((data) => {
-        setStats(data);
+    async function fetchStats() {
+      try {
+        // 1. Total visits
+        const { count: totalCount, error: totalError } = await supabase
+          .from('pbti_visits')
+          .select('*', { count: 'exact', head: true });
+        
+        if (totalError) throw totalError;
+
+        // 2. Today's visits
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const { count: todayCount, error: todayError } = await supabase
+          .from('pbti_visits')
+          .select('*', { count: 'exact', head: true })
+          .gte('created_at', today.toISOString());
+
+        if (todayError) throw todayError;
+
+        // 3. Recent 50 visits
+        const { data: recentData, error: recentError } = await supabase
+          .from('pbti_visits')
+          .select('ip, created_at')
+          .order('created_at', { ascending: false })
+          .limit(50);
+
+        if (recentError) throw recentError;
+
+        // 4. Daily stats (last 14 days)
+        // Note: Supabase/PostgreSQL aggregation is better done via a RPC or complex query,
+        // but for simplicity, we'll fetch last 14 days data and aggregate in JS.
+        const fourteenDaysAgo = new Date();
+        fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 14);
+        
+        const { data: dailyData, error: dailyError } = await supabase
+          .from('pbti_visits')
+          .select('created_at')
+          .gte('created_at', fourteenDaysAgo.toISOString());
+
+        if (dailyError) throw dailyError;
+
+        const dailyMap: Record<string, number> = {};
+        dailyData?.forEach(v => {
+          const date = v.created_at.split('T')[0];
+          dailyMap[date] = (dailyMap[date] || 0) + 1;
+        });
+
+        const dailyStats: DailyStat[] = Object.keys(dailyMap)
+          .map(date => ({ date, count: dailyMap[date] }))
+          .sort((a, b) => b.date.localeCompare(a.date));
+
+        setStats({
+          totalVisits: totalCount || 0,
+          todayVisits: todayCount || 0,
+          recentVisits: (recentData as Visit[]) || [],
+          dailyStats: dailyStats
+        });
         setLoading(false);
-      })
-      .catch((err) => {
+      } catch (err: any) {
         setError(err.message);
         setLoading(false);
-      });
+      }
+    }
+
+    fetchStats();
   }, []);
 
-  if (loading) return <div className="app-container"><p>통계 데이터를 불러오는 중...</p></div>;
+  if (loading) return <div className="app-container"><p>Supabase에서 데이터를 불러오는 중...</p></div>;
   if (error) return <div className="app-container"><p style={{ color: 'red' }}>에러: {error}</p></div>;
   if (!stats) return null;
 
   return (
     <div className="app-container" style={{ maxWidth: '800px', margin: '0 auto', padding: '20px', textAlign: 'left' }}>
-      <h1 style={{ textAlign: 'center', marginBottom: '30px' }}>방문자 통계 분석 ✨</h1>
+      <h1 style={{ textAlign: 'center', marginBottom: '30px' }}>방문자 통계 분석 (Supabase) ✨</h1>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '30px' }}>
         <div style={{ background: '#7c3aed', color: 'white', padding: '20px', borderRadius: '15px', textAlign: 'center' }}>
           <div style={{ fontSize: '14px', opacity: 0.8 }}>총 방문횟수</div>
-          <div style={{ fontSize: '32px', fontWeight: 'bold' }}>{stats.totalVisits.toLocaleString()}</div>
+          <div style={{ fontSize: '32px', fontWeight: 'bold' }}>{(stats.totalVisits).toLocaleString()}</div>
         </div>
         <div style={{ background: '#10b981', color: 'white', padding: '20px', borderRadius: '15px', textAlign: 'center' }}>
           <div style={{ fontSize: '14px', opacity: 0.8 }}>오늘 방문횟수</div>
-          <div style={{ fontSize: '32px', fontWeight: 'bold' }}>{stats.todayVisits.toLocaleString()}</div>
+          <div style={{ fontSize: '32px', fontWeight: 'bold' }}>{(stats.todayVisits).toLocaleString()}</div>
         </div>
       </div>
 
       <div style={{ background: 'white', padding: '20px', borderRadius: '15px', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', marginBottom: '30px' }}>
         <h2 style={{ fontSize: '18px', marginBottom: '20px' }}>일별 방문 추이 (최근 14일)</h2>
         <div style={{ display: 'flex', alignItems: 'flex-end', height: '200px', gap: '10px', paddingBottom: '20px', borderBottom: '1px solid #e2e8f0' }}>
-          {stats.dailyStats.slice().reverse().map((day) => {
-            const max = Math.max(...stats.dailyStats.map(d => d.count), 1);
-            const height = (day.count / max) * 150;
-            return (
-              <div key={day.date} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <div style={{ 
-                  width: '100%', 
-                  height: `${height}px`, 
-                  background: '#7c3aed', 
-                  borderRadius: '4px 4px 0 0',
-                  minHeight: day.count > 0 ? '5px' : '0'
-                }}></div>
-                <div style={{ fontSize: '10px', marginTop: '5px', transform: 'rotate(-45deg)', whiteSpace: 'nowrap' }}>
-                  {day.date.split('-').slice(1).join('/')}
+          {stats.dailyStats.length > 0 ? (
+            stats.dailyStats.slice(0, 14).reverse().map((day) => {
+              const max = Math.max(...stats.dailyStats.map(d => d.count), 1);
+              const height = (day.count / max) * 150;
+              return (
+                <div key={day.date} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  <div style={{ 
+                    width: '100%', 
+                    height: `${height}px`, 
+                    background: '#7c3aed', 
+                    borderRadius: '4px 4px 0 0',
+                    minHeight: day.count > 0 ? '5px' : '0'
+                  }}></div>
+                  <div style={{ fontSize: '10px', marginTop: '5px', transform: 'rotate(-45deg)', whiteSpace: 'nowrap' }}>
+                    {day.date.split('-').slice(1).join('/')}
+                  </div>
+                  <div style={{ fontSize: '10px', fontWeight: 'bold', marginTop: '15px' }}>{day.count}</div>
                 </div>
-                <div style={{ fontSize: '10px', fontWeight: 'bold', marginTop: '15px' }}>{day.count}</div>
-              </div>
-            );
-          })}
+              );
+            })
+          ) : (
+            <p style={{ width: '100%', textAlign: 'center', color: '#64748b' }}>데이터가 없습니다.</p>
+          )}
         </div>
       </div>
 
@@ -96,7 +153,7 @@ function StatsPage() {
               {stats.recentVisits.map((visit, i) => (
                 <tr key={i} style={{ borderBottom: '1px solid #f1f5f9' }}>
                   <td style={{ padding: '10px', fontSize: '14px' }}>{visit.ip}</td>
-                  <td style={{ padding: '10px', fontSize: '14px', color: '#64748b' }}>{new Date(visit.visit_time).toLocaleString()}</td>
+                  <td style={{ padding: '10px', fontSize: '14px', color: '#64748b' }}>{new Date(visit.created_at).toLocaleString()}</td>
                 </tr>
               ))}
             </tbody>
